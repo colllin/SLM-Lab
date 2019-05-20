@@ -26,12 +26,12 @@
       "net": {
         "type": "MLPNet",
         "shared": false,
-        "hid_layers": [64, 64],
+        "hid_layers": [128, 64],
         "hid_layers_activation": "tanh",
         "init_fn": "orthogonal_",
         "normalize": false,
         "batch_norm": false,
-        "clip_grad_val": 0.5,
+        "clip_grad_val": 1.0,
         "use_same_optim": false,
         "loss_spec": {
           "name": "MSELoss"
@@ -46,16 +46,16 @@
         },
         "lr_scheduler_spec": {
           "name": "LinearToZero",
-          "total_t": 1e6
+          "total_t": 5e6
         },
         "gpu": true
       }
     }],
     "env": [{
       "name": "${env}",
-      "num_envs": 8,
+      "num_envs": 4,
       "max_t": null,
-      "max_tick": 1e6
+      "max_tick": 2.5e6
     }],
     "body": {
       "product": "outer",
