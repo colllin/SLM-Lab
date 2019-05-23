@@ -38,6 +38,14 @@ class LabJsonEncoder(json.JSONEncoder):
             return str(obj)
 
 
+def batch_get(arr, idxs):
+    '''Get multi-idxs from an array depending if it's a python list or np.array'''
+    if isinstance(arr, (list, deque)):
+        return np.array(operator.itemgetter(*idxs)(arr))
+    else:
+        return arr[idxs]
+
+
 def calc_ts_diff(ts2, ts1):
     '''
     Calculate the time from tss ts1 to ts2
@@ -94,14 +102,6 @@ def concat_batches(batches):
             datas.append(data)
         concat_batch[k] = np.concatenate(datas)
     return concat_batch
-
-
-def cond_multiget(arr, idxs):
-    '''Get multi-idxs from an array depending if it's a python list or np.array'''
-    if isinstance(arr, (list, deque)):
-        return np.array(operator.itemgetter(*idxs)(arr))
-    else:
-        return arr[idxs]
 
 
 def count_nonan(arr):
@@ -334,14 +334,14 @@ def nonan_all(v):
     return bool(np.all(v) and ~np.all(np.isnan(v)))
 
 
-def parallelize_fn(fn, args, num_cpus=NUM_CPUS):
+def parallelize(fn, args, num_cpus=NUM_CPUS):
     '''
     Parallelize a method fn, args and return results with order preserved per args.
-    fn should take only a single arg.
+    args should be a list of tuples.
     @returns {list} results Order preserved output from fn.
     '''
     pool = mp.Pool(num_cpus, maxtasksperchild=1)
-    results = pool.map(fn, args)
+    results = pool.starmap(fn, args)
     pool.close()
     pool.join()
     return results
