@@ -18,15 +18,15 @@
         },
         "entropy_coef_spec": {
           "name": "no_decay",
-          "start_val": 0.0,
-          "end_val": 0.0,
+          "start_val": 0.01,
+          "end_val": 0.01,
           "start_step": 0,
           "end_step": 0
         },
         "val_loss_coef": 0.5,
         "training_frequency": 2048,
         "minibatch_size": 64,
-        "training_epoch": 10
+        "training_epoch": 5
       },
       "memory": {
         "name": "OnPolicyBatchReplay",
@@ -37,9 +37,9 @@
         "hid_layers": [256, 128],
         "hid_layers_activation": "tanh",
         "init_fn": "orthogonal_",
-        "normalize": false,
+        "normalize": true,
         "batch_norm": false,
-        "clip_grad_val": 1.0,
+        "clip_grad_val": 0.5,
         "use_same_optim": false,
         "loss_spec": {
           "name": "MSELoss"
@@ -58,7 +58,7 @@
     }],
     "env": [{
       "name": "${env}",
-      "num_envs": 8,
+      "num_envs": 16,
       "max_t": null,
       "max_tick": 5e6
     }],

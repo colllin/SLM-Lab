@@ -12,8 +12,8 @@
         "num_step_returns": null,
         "entropy_coef_spec": {
           "name": "no_decay",
-          "start_val": 0.0,
-          "end_val": 0.0,
+          "start_val": 0.01,
+          "end_val": 0.01,
           "start_step": 0,
           "end_step": 0
         },
@@ -29,20 +29,24 @@
         "hid_layers": [256, 128],
         "hid_layers_activation": "tanh",
         "init_fn": "orthogonal_",
-        "normalize": false,
+        "normalize": true,
         "batch_norm": false,
-        "clip_grad_val": 1.0,
+        "clip_grad_val": 0.5,
         "use_same_optim": false,
         "loss_spec": {
           "name": "MSELoss"
         },
         "actor_optim_spec": {
-          "name": "Adam",
-          "lr": 1e-4,
+          "name": "RMSprop",
+          "lr": 0.0001,
+          "alpha": 0.99,
+          "eps": 1e-05
         },
         "critic_optim_spec": {
-          "name": "Adam",
-          "lr": 1e-4,
+          "name": "RMSprop",
+          "lr": 0.0001,
+          "alpha": 0.99,
+          "eps": 1e-05
         },
         "lr_scheduler_spec": null,
         "gpu": true
@@ -50,7 +54,7 @@
     }],
     "env": [{
       "name": "${env}",
-      "num_envs": 8,
+      "num_envs": 16,
       "max_t": null,
       "max_tick": 5e6
     }],
