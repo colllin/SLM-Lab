@@ -69,7 +69,8 @@
       "max_tick_unit": "total_t",
       "max_session": 4,
       "max_trial": 24,
-      "param_spec_process": 12
+      "param_spec_process": 12,
+      "search": "RandomSearch"
     },
     "spec_params": {
       "env": [
