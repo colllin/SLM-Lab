@@ -21,7 +21,7 @@ Modular Deep Reinforcement Learning framework in PyTorch.
 
 ## Features
 
-### [Algorithms](#algorithms)
+### Algorithms
 
 SLM Lab implements a number of canonical RL [algorithms](https://github.com/kengz/SLM-Lab/tree/master/slm_lab/agent/algorithm) with reusable **modular components** and *class-inheritance*, with commitment to code quality and performance.
 
@@ -39,7 +39,7 @@ Below shows the latest benchmark status. See [benchmark results here](https://gi
 | PPO, distributed-PPO    | :white_check_mark: |            |
 | SIL (A2C, PPO)          |       |            |
 
-### [Environments](#environments)
+### Environments
 
 SLM Lab integrates with multiple environment offerings:
   - [OpenAI gym](https://github.com/openai/gym)
@@ -49,7 +49,7 @@ SLM Lab integrates with multiple environment offerings:
 
 *Contributions are welcome to integrate more environments!*
 
-### [Metrics and Experimentation](#experimentation-framework)
+### Metrics and Experimentation
 
 To facilitate better RL development, SLM Lab also comes with prebuilt *metrics* and *experimentation framework*:
 - every run generates metrics, graphs and data for analysis, as well as spec for reproducibility
@@ -100,8 +100,6 @@ python run_lab.py slm_lab/spec/demo.json dqn_cartpole train
 
 This will run a new `Trial` in *training mode*. At the end of it, all the metrics and graphs will be output to the `data/` folder.
 
-![](https://kengz.gitbooks.io/slm-lab/content/assets/demo_training.png)
-
 
 #### A2C Atari
 
@@ -109,7 +107,7 @@ Run A2C to solve Atari Pong:
 
 ```shell
 conda activate lab
-python run_lab.py slm_lab/spec/experimental/a2c/a2c_pong.json a2c_pong train
+python run_lab.py slm_lab/spec/benchmark/a2c/a2c_pong.json a2c_pong train
 ```
 
 ![](https://kengz.gitbooks.io/slm-lab/content/assets/demo_atari.png)
