@@ -1,0 +1,49 @@
+#!/bin/bash --login
+# This script sets up SLM Lab for Linux Ubuntu
+
+# Fail on the first error; killable by SIGINT
+set -e
+trap "exit" INT
+
+echo "--- Installing system dependencies ---"
+sudo add-apt-repository -y ppa:deadsnakes/ppa
+sudo apt-get update
+sudo apt-get install -y build-essential \
+    curl nano git wget zip libstdc++6 \
+    python3.6 python3.6-dev zlib1g-dev libjpeg-dev cmake swig python-pyglet python3-opengl libboost-all-dev libsdl2-dev libosmesa6-dev patchelf ffmpeg xvfb
+sudo rm -rf /var/lib/apt/lists/*
+
+echo "--- Installing pip and pipenv ---"
+if which pipenv >/dev/null; then
+  echo "pipenv is already installed"
+else
+  if which pip3.6 >/dev/null; then
+    echo "pip3.6 is already installed"
+  else
+    curl -O https://bootstrap.pypa.io/get-pip.py
+    sudo python3.6 get-pip.py
+    rm get-pip.py
+  fi
+  sudo pip3.6 install pipenv
+fi
+
+echo "--- Initializing pipenv environment ---"
+pipenv --python 3.6
+
+# remove for reset:
+# pipenv --rm
+
+echo "--- Updating pipenv environment ---"
+pipenv install
+
+echo "--- Lab setup complete ---"
+
+echo
+echo
+echo "To activate virtual environment:"
+echo "$ pipenv shell"
+echo
+echo "Or to run commands within the virtual environment without activating it:"
+echo "$ pipenv run (command to run)"
+echo "e.g."
+echo "$ pipenv run python run_lab.py"
