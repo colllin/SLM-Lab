@@ -15,11 +15,11 @@ ujson = "==1.35"
 pyyaml = "==3.12"
 colorlog = "==3.1.*"
 gym = {extras = ["atari", "box2d", "classic_control"],version = "==0.12.*"}
-plotly = "==3.8.*"
 colorlover = "==0.3.*"
 ray = {extras = ["debug"],version = "==0.7.*"}
 xvfbwrapper = "==0.2.*"
 roboschool = "==1.0.*"
+plotly = "*"
 
 [requires]
 python_version = "3.6"
