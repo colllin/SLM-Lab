@@ -23,7 +23,7 @@ class SIL(ActorCritic):
         "action_policy": "default",
         "explore_var_spec": null,
         "gamma": 0.99,
-        "lam": 1.0,
+        "lam": 0.95,
         "num_step_returns": 100,
         "entropy_coef_spec": {
           "name": "linear_decay",
@@ -91,7 +91,8 @@ class SIL(ActorCritic):
     def sample(self):
         '''Modify the onpolicy sample to also append to replay'''
         batch = self.body.memory.sample()
-        batch = {k: np.concatenate(v) for k, v in batch.items()}  # concat episodic memory
+        if self.body.memory.is_episodic:
+            batch = {k: np.concatenate(v) for k, v in batch.items()}  # concat episodic memory
         for idx in range(len(batch['dones'])):
             tuples = [batch[k][idx] for k in self.body.replay_memory.data_keys]
             self.body.replay_memory.add_experience(*tuples)
@@ -161,7 +162,7 @@ class PPOSIL(SIL, PPO):
         "action_policy": "default",
         "explore_var_spec": null,
         "gamma": 0.99,
-        "lam": 1.0,
+        "lam": 0.95,
         "clip_eps_spec": {
           "name": "linear_decay",
           "start_val": 0.01,
@@ -178,7 +179,7 @@ class PPOSIL(SIL, PPO):
         },
         "sil_policy_loss_coef": 1.0,
         "sil_val_loss_coef": 0.01,
-        "training_frequency": 1,
+        "time_horizon": 32,
         "training_batch_iter": 8,
         "training_iter": 8,
         "training_epoch": 8,
