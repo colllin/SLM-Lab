@@ -42,6 +42,10 @@ class OpenAIEnv(BaseEnv):
         self.max_t = self.max_t or self.u_env.spec.max_episode_steps
         assert self.max_t is not None
         logger.info(util.self_desc(self))
+        if util.to_record_video():
+            video_prepath = util.insert_folder(util.get_prepath(spec, unit='session'), 'video')
+            self.u_env = gym.wrappers.Monitor(self.u_env, video_prepath, force=True)
+            logger.info(f'Recorded videos will be saved in {video_prepath}')
 
     def seed(self, seed):
         self.u_env.seed(seed)

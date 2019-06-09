@@ -600,6 +600,10 @@ def to_render():
     return get_lab_mode() in ('dev', 'enjoy') and os.environ.get('RENDER', 'true') == 'true'
 
 
+def to_record_video():
+    return get_lab_mode() in ('enjoy') and os.environ.get('RECORD', 'false') == 'true'
+
+
 def to_torch_batch(batch, device, is_episodic):
     '''Mutate a batch (dict) to make its values from numpy into PyTorch tensor'''
     for k in batch:
