@@ -66,10 +66,10 @@ To facilitate better RL development, SLM Lab also comes with prebuilt *metrics* 
 2. Install dependencies (this uses Conda for optimality):
     ```shell
     cd SLM-Lab/
-    bin/setup
+    sudo bin/setup
     ```
 
-  >Alternatively, instead of `bin/setup`, copy-paste from [`bin/setup_macOS` or `bin/setup_ubuntu`](https://github.com/kengz/SLM-Lab/tree/master/bin) into your terminal to install manually.
+  >Alternatively, instead of running `sudo bin/setup`, copy-paste from [`bin/setup_macOS` or `bin/setup_ubuntu`](https://github.com/kengz/SLM-Lab/tree/master/bin) into your terminal and add `sudo` accordingly to run the installation commands.
 
   >Useful reference: [Debugging](https://kengz.gitbooks.io/slm-lab/content/installation/debugging.html)
 
@@ -107,7 +107,7 @@ Run A2C to solve Atari Pong:
 
 ```shell
 conda activate lab
-python run_lab.py slm_lab/spec/benchmark/a2c/a2c_pong.json a2c_pong train
+python run_lab.py slm_lab/spec/benchmark/a2c/a2c_gae_pong.json a2c_gae_pong train
 ```
 
 ![](https://kengz.gitbooks.io/slm-lab/content/assets/demo_atari.png)
