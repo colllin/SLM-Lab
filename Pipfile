@@ -6,6 +6,8 @@ verify_ssl = true
 [dev-packages]
 pytest = "*"
 flaky = "*"
+pytest-cov = "*"
+pytest-timeout = "*"
 
 [packages]
 opencv-python = "==3.4.*"
