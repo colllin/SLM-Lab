@@ -4,6 +4,8 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
+pytest = "*"
+flaky = "*"
 
 [packages]
 opencv-python = "==3.4.*"
@@ -20,6 +22,7 @@ ray = {extras = ["debug"],version = "==0.7.*"}
 xvfbwrapper = "==0.2.*"
 roboschool = "==1.0.*"
 plotly = "*"
+unityagents = "*"
 
 [requires]
 python_version = "3.6"
