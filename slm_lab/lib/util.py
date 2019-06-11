@@ -601,7 +601,7 @@ def to_render():
 
 
 def to_record_video():
-    return get_lab_mode() in ('enjoy') and os.environ.get('RECORD', 'false') == 'true'
+    return get_lab_mode() in ('enjoy',) and os.environ.get('RECORD', 'false') == 'true'
 
 
 def to_torch_batch(batch, device, is_episodic):
