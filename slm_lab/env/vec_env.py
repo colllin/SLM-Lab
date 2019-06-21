@@ -16,6 +16,7 @@ import torch.multiprocessing as mp
 
 _NP_TO_CT = {
     np.float32: ctypes.c_float,
+    np.float64: ctypes.c_double,
     np.int32: ctypes.c_int32,
     np.int8: ctypes.c_int8,
     np.uint8: ctypes.c_char,

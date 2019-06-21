@@ -188,21 +188,21 @@ def get_param_specs(spec):
     return specs
 
 
-def override_dev_spec(spec):
-    spec['meta']['max_session'] = 1
-    spec['meta']['max_trial'] = 2
-    return spec
-
-
-def override_enjoy_spec(spec):
-    spec['meta']['max_session'] = 1
-    return spec
-
-
-def override_eval_spec(spec):
-    spec['meta']['max_session'] = 1
-    # evaluate by episode is set in env clock init in env/base.py
-    return spec
+# def override_dev_spec(spec):
+#     spec['meta']['max_session'] = 1
+#     spec['meta']['max_trial'] = 2
+#     return spec
+# 
+# 
+# def override_enjoy_spec(spec):
+#     spec['meta']['max_session'] = 1
+#     return spec
+# 
+# 
+# def override_eval_spec(spec):
+#     spec['meta']['max_session'] = 1
+#     # evaluate by episode is set in env clock init in env/base.py
+#     return spec
 
 
 def override_test_spec(spec):

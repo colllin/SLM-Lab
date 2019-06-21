@@ -8,6 +8,7 @@ import gym
 import numpy as np
 import pydash as ps
 import roboschool
+import realcomp
 
 
 logger = logger.get_logger(__name__)

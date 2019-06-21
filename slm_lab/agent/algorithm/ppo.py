@@ -28,13 +28,14 @@ class PPO(ActorCritic):
         end for
         optimize surrogate L wrt theta, with K epochs and minibatch size M <= NT
     end for
+    '''
 
-    e.g. algorithm_spec
-    "algorithm": {
+    spec = {
         "name": "PPO",
         "action_pdtype": "default",
         "action_policy": "default",
-        "explore_var_spec": null,
+        # Optional
+        "explore_var_spec": None,
         "gamma": 0.99,
         "lam": 0.95,
         "clip_eps_spec": {
@@ -44,6 +45,7 @@ class PPO(ActorCritic):
           "start_step": 100,
           "end_step": 5000,
         },
+        # Optional
         "entropy_coef_spec": {
           "name": "linear_decay",
           "start_val": 0.01,
@@ -51,30 +53,20 @@ class PPO(ActorCritic):
           "start_step": 100,
           "end_step": 5000,
         },
-        "minibatch_size": 256,
+        "minibatch_size": 4,
         "time_horizon": 32,
         "training_epoch": 8,
+        "val_loss_coef": 1.0,
+        "net": {
+            "type": "MLPNet",
+            # e.g. special net_spec param "shared" to share/separate Actor/Critic
+            "shared": True,
+        },
     }
 
-    e.g. special net_spec param "shared" to share/separate Actor/Critic
-    "net": {
-        "type": "MLPNet",
-        "shared": true,
-        ...
-    '''
 
     @lab_api
     def init_algorithm_params(self):
-        '''Initialize other algorithm parameters'''
-        # set default
-        util.set_attr(self, dict(
-            action_pdtype='default',
-            action_policy='default',
-            explore_var_spec=None,
-            entropy_coef_spec=None,
-            minibatch_size=4,
-            val_loss_coef=1.0,
-        ))
         util.set_attr(self, self.algorithm_spec, [
             'action_pdtype',
             'action_policy',
@@ -211,3 +203,16 @@ class PPO(ActorCritic):
             self.body.entropy_coef = self.entropy_coef_scheduler.update(self, self.body.env.clock)
         self.body.clip_eps = self.clip_eps_scheduler.update(self, self.body.env.clock)
         return self.body.explore_var
+
+
+
+
+
+# class PPO(object) {
+# 
+#     __init__() {
+#         init_nets()
+#     }
+# }
+# 
+# 

@@ -25,6 +25,13 @@ xvfbwrapper = "==0.2.*"
 roboschool = "==1.0.*"
 plotly = "*"
 unityagents = "*"
+ae9da51 = {editable = true,path = "./../REALCompetitionStartingKit"}
+pybullet = "*"
+pyopengl = "*"
+realcomp = {editable = true,path = "./../REALCompetitionStartingKit"}
+dvc = "*"
+ipykernel = "*"
+fire = "*"
 
 [requires]
 python_version = "3.6"

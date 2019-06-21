@@ -11,6 +11,11 @@ logger = logger.get_logger(__name__)
 
 def set_gym_space_attr(gym_space):
     '''Set missing gym space attributes for standardization'''
+    if isinstance(gym_space, spaces.Dict):
+        for space in gym_space.spaces.values():
+            set_gym_space_attr(space)
+        return
+        
     if isinstance(gym_space, spaces.Box):
         setattr(gym_space, 'is_discrete', False)
     elif isinstance(gym_space, spaces.Discrete):
