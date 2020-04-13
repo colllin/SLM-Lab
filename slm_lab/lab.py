@@ -40,7 +40,7 @@ class Lab(object):
         Session(spec).run()
 
     def train(self, specfile, specname):
-        "eval + optimizes agent"
+        "enjoy + optimizes agent + periodic eval"
         logger.info(f'Running lab mode:train with specfile:{specfile} specname:{specname}')
         spec = spec_util.get(specfile, specname)
         # FIXME Why does this need to be in env?
@@ -70,8 +70,9 @@ class Lab(object):
         param_specs = spec_util.get_param_specs(spec)
         search.run_param_specs(param_specs)
  
-    # FIXME I don't think we really need this unless it does something more advanced than
-    #       what you could accomplish with a simple bash script that runs the lab a few times.
+    # FIXME I don't think we really need this unless it does something more advanced such as
+    #       coordinate your jobs across a cluster via Ray.  If it only runs them in parallel
+    #.      or serially, then I believe the same could be accomplished with a simple bash script.
     def jobs(self, spec='job/experiments.json'):
         "runs a set of distributed jobs in the lab (any list of lab commands)"
         print(f'Running jobs spec: {spec}...')

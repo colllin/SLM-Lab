@@ -9,29 +9,29 @@ import time
 logger = logger.get_logger(__name__)
 
 
-def set_gym_space_attr(gym_space):
-    '''Set missing gym space attributes for standardization'''
-    if isinstance(gym_space, spaces.Dict):
-        for space in gym_space.spaces.values():
-            set_gym_space_attr(space)
-        return
-        
-    if isinstance(gym_space, spaces.Box):
-        setattr(gym_space, 'is_discrete', False)
-    elif isinstance(gym_space, spaces.Discrete):
-        setattr(gym_space, 'is_discrete', True)
-        setattr(gym_space, 'low', 0)
-        setattr(gym_space, 'high', gym_space.n)
-    elif isinstance(gym_space, spaces.MultiBinary):
-        setattr(gym_space, 'is_discrete', True)
-        setattr(gym_space, 'low', np.full(gym_space.n, 0))
-        setattr(gym_space, 'high', np.full(gym_space.n, 2))
-    elif isinstance(gym_space, spaces.MultiDiscrete):
-        setattr(gym_space, 'is_discrete', True)
-        setattr(gym_space, 'low', np.zeros_like(gym_space.nvec))
-        setattr(gym_space, 'high', np.array(gym_space.nvec))
-    else:
-        raise ValueError('gym_space not recognized')
+# def set_gym_space_attr(gym_space):
+#     '''Set missing gym space attributes for standardization'''
+#     if isinstance(gym_space, spaces.Dict):
+#         for space in gym_space.spaces.values():
+#             set_gym_space_attr(space)
+#         return
+#         
+#     if isinstance(gym_space, spaces.Box):
+#         setattr(gym_space, 'is_discrete', False)
+#     elif isinstance(gym_space, spaces.Discrete):
+#         setattr(gym_space, 'is_discrete', True)
+#         setattr(gym_space, 'low', 0)
+#         setattr(gym_space, 'high', gym_space.n)
+#     elif isinstance(gym_space, spaces.MultiBinary):
+#         setattr(gym_space, 'is_discrete', True)
+#         setattr(gym_space, 'low', np.full(gym_space.n, 0))
+#         setattr(gym_space, 'high', np.full(gym_space.n, 2))
+#     elif isinstance(gym_space, spaces.MultiDiscrete):
+#         setattr(gym_space, 'is_discrete', True)
+#         setattr(gym_space, 'low', np.zeros_like(gym_space.nvec))
+#         setattr(gym_space, 'high', np.array(gym_space.nvec))
+#     else:
+#         raise ValueError('gym_space not recognized')
 
 
 class Clock:
@@ -132,59 +132,59 @@ class BaseEnv(ABC):
         self.clock = Clock(self.max_frame, self.clock_speed)
         self.to_render = util.to_render()
 
-    def _set_attr_from_u_env(self, u_env):
-        '''Set the observation, action dimensions and action type from u_env'''
-        self.observation_space, self.action_space = self._get_spaces(u_env)
-        self.observable_dim = self._get_observable_dim(self.observation_space)
-        self.action_dim = self._get_action_dim(self.action_space)
-        self.is_discrete = self._is_discrete(self.action_space)
+#     def _set_attr_from_u_env(self, u_env):
+#         '''Set the observation, action dimensions and action type from u_env'''
+#         self.observation_space, self.action_space = self._get_spaces(u_env)
+#         self.observable_dim = self._get_observable_dim(self.observation_space)
+#         self.action_dim = self._get_action_dim(self.action_space)
+#         self.is_discrete = self._is_discrete(self.action_space)
 
-    def _get_spaces(self, u_env):
-        '''Helper to set the extra attributes to, and get, observation and action spaces'''
-        observation_space = u_env.observation_space
-        action_space = u_env.action_space
-        set_gym_space_attr(observation_space)
-        set_gym_space_attr(action_space)
-        return observation_space, action_space
+#     def _get_spaces(self, u_env):
+#         '''Helper to set the extra attributes to, and get, observation and action spaces'''
+#         observation_space = u_env.observation_space
+#         action_space = u_env.action_space
+#         set_gym_space_attr(observation_space)
+#         set_gym_space_attr(action_space)
+#         return observation_space, action_space
 
-    def _get_observable_dim(self, observation_space):
-        '''Get the observable dim for an agent in env'''
-        state_dim = observation_space.shape
-        if len(state_dim) == 1:
-            state_dim = state_dim[0]
-        return {'state': state_dim}
+#     def _get_observable_dim(self, observation_space):
+#         '''Get the observable dim for an agent in env'''
+#         state_dim = observation_space.shape
+#         if len(state_dim) == 1:
+#             state_dim = state_dim[0]
+#         return {'state': state_dim}
 
-    def _get_action_dim(self, action_space):
-        '''Get the action dim for an action_space for agent to use'''
-        if isinstance(action_space, spaces.Box):
-            assert len(action_space.shape) == 1
-            action_dim = action_space.shape[0]
-        elif isinstance(action_space, (spaces.Discrete, spaces.MultiBinary)):
-            action_dim = action_space.n
-        elif isinstance(action_space, spaces.MultiDiscrete):
-            action_dim = action_space.nvec.tolist()
-        else:
-            raise ValueError('action_space not recognized')
-        return action_dim
+#     def _get_action_dim(self, action_space):
+#         '''Get the action dim for an action_space for agent to use'''
+#         if isinstance(action_space, spaces.Box):
+#             assert len(action_space.shape) == 1
+#             action_dim = action_space.shape[0]
+#         elif isinstance(action_space, (spaces.Discrete, spaces.MultiBinary)):
+#             action_dim = action_space.n
+#         elif isinstance(action_space, spaces.MultiDiscrete):
+#             action_dim = action_space.nvec.tolist()
+#         else:
+#             raise ValueError('action_space not recognized')
+#         return action_dim
 
-    def _is_discrete(self, action_space):
-        '''Check if an action space is discrete'''
-        return util.get_class_name(action_space) != 'Box'
+#     def _is_discrete(self, action_space):
+#         '''Check if an action space is discrete'''
+#         return util.get_class_name(action_space) != 'Box'
 
-    @abstractmethod
-    @lab_api
-    def reset(self):
-        '''Reset method, return state'''
-        raise NotImplementedError
+#     @abstractmethod
+#     @lab_api
+#     def reset(self):
+#         '''Reset method, return state'''
+#         raise NotImplementedError
 
-    @abstractmethod
-    @lab_api
-    def step(self, action):
-        '''Step method, return state, reward, done, info'''
-        raise NotImplementedError
+#     @abstractmethod
+#     @lab_api
+#     def step(self, action):
+#         '''Step method, return state, reward, done, info'''
+#         raise NotImplementedError
 
-    @abstractmethod
-    @lab_api
-    def close(self):
-        '''Method to close and cleanup env'''
-        raise NotImplementedError
+#     @abstractmethod
+#     @lab_api
+#     def close(self):
+#         '''Method to close and cleanup env'''
+#         raise NotImplementedError

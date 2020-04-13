@@ -1,6 +1,7 @@
 # The control module
 # Creates and runs control loops at levels: Experiment, Trial, Session
 from copy import deepcopy
+import collections
 from slm_lab.agent import Agent, Body
 from slm_lab.agent.net import net_util
 from slm_lab.env import make_env
@@ -8,6 +9,8 @@ from slm_lab.experiment import analysis, search
 from slm_lab.lib import logger, util
 from slm_lab.spec import spec_util
 import torch.multiprocessing as mp
+
+
 
 
 def make_agent_env(spec, global_nets=None):
@@ -32,54 +35,64 @@ class Session:
     then gather data and analyze it to produce session data.
     '''
 
-    def __init__(self, spec, global_nets=None):
-        self.spec = spec
-        self.index = self.spec['meta']['session']
-        util.set_random_seed(self.spec)
-        util.set_cuda_id(self.spec)
-        util.set_logger(self.spec, logger, 'session')
-        spec_util.save(spec, unit='session')
+    def __init__(self, spec, render=False, record=False):
+#         self.spec = spec
+#         self.index = self.spec['meta']['session']
+#         util.set_random_seed(self.spec)
+#         util.set_cuda_id(self.spec)
+#         util.set_logger(self.spec, logger, 'session')
+#         spec_util.save(spec, unit='session')
+        
+#         self.agent, self.env = make_agent_env(self.spec, global_nets)
+#         with util.ctx_lab_mode('eval'):  # env for eval
+#             self.eval_env = make_env(self.spec)
+#         logger.info(util.self_desc(self))
 
-        self.agent, self.env = make_agent_env(self.spec, global_nets)
-        with util.ctx_lab_mode('eval'):  # env for eval
-            self.eval_env = make_env(self.spec)
-        logger.info(util.self_desc(self))
+        self.envs = [ConcurrentEnv(spec['env']) for _ in range(spec['env']['num_envs'])]
+#         if record:
+#             self.envs = [gym.wrappers.Monitor(e, ...) for e in self.envs]
 
-    def to_ckpt(self, env, mode='eval'):
-        '''Check with clock whether to run log/eval ckpt: at the start, save_freq, and the end'''
-        if mode == 'eval' and util.in_eval_lab_modes():  # avoid double-eval: eval-ckpt in eval mode
-            return False
-        clock = env.clock
-        frame = clock.get()
-        frequency = env.eval_frequency if mode == 'eval' else env.log_frequency
-        if frame == 0 or clock.get('opt_step') == 0:  # avoid ckpt at init
-            to_ckpt = False
-        elif frequency is None:  # default episodic
-            to_ckpt = env.done
-        else:  # normal ckpt condition by mod remainder (general for venv)
-            to_ckpt = util.frame_mod(frame, frequency, env.num_envs) or frame == clock.max_frame
-        return to_ckpt
+        self.agent = Agent(spec['agent'])
+        self.pool = EpisodePool(self.agent, self.envs)
+        if render:
+            # self.envs = [AutoRender(e) for e in self.envs]
+            self.pool.subscribe('STEP_BATCH', self.pool.render)
 
-    def try_ckpt(self, agent, env):
-        '''Check then run checkpoint log/eval'''
-        body = agent.body
-        if self.to_ckpt(env, 'log'):
-            body.train_ckpt()
-            body.log_summary('train')
+#     def to_ckpt(self, env, mode='eval'):
+#         '''Check with clock whether to run log/eval ckpt: at the start, save_freq, and the end'''
+#         if mode == 'eval' and util.in_eval_lab_modes():  # avoid double-eval: eval-ckpt in eval mode
+#             return False
+#         clock = env.clock
+#         frame = clock.get()
+#         frequency = env.eval_frequency if mode == 'eval' else env.log_frequency
+#         if frame == 0 or clock.get('opt_step') == 0:  # avoid ckpt at init
+#             to_ckpt = False
+#         elif frequency is None:  # default episodic
+#             to_ckpt = env.done
+#         else:  # normal ckpt condition by mod remainder (general for venv)
+#             to_ckpt = util.frame_mod(frame, frequency, env.num_envs) or frame == clock.max_frame
+#         return to_ckpt
 
-        if self.to_ckpt(env, 'eval'):
-            avg_return = analysis.gen_avg_return(agent, self.eval_env)
-            body.eval_ckpt(self.eval_env, avg_return)
-            body.log_summary('eval')
-            if body.eval_reward_ma >= body.best_reward_ma:
-                body.best_reward_ma = body.eval_reward_ma
-                agent.save(ckpt='best')
-            if len(body.train_df) > 1:  # need > 1 row to calculate stability
-                metrics = analysis.analyze_session(self.spec, body.train_df, 'train')
-                body.log_metrics(metrics['scalar'], 'train')
-            if len(body.eval_df) > 1:  # need > 1 row to calculate stability
-                metrics = analysis.analyze_session(self.spec, body.eval_df, 'eval')
-                body.log_metrics(metrics['scalar'], 'eval')
+#     def try_ckpt(self, agent, env):
+#         '''Check then run checkpoint log/eval'''
+#         body = agent.body
+#         if self.to_ckpt(env, 'log'):
+#             body.train_ckpt()
+#             body.log_summary('train')
+# 
+#         if self.to_ckpt(env, 'eval'):
+#             avg_return = analysis.gen_avg_return(agent, self.eval_env)
+#             body.eval_ckpt(self.eval_env, avg_return)
+#             body.log_summary('eval')
+#             if body.eval_reward_ma >= body.best_reward_ma:
+#                 body.best_reward_ma = body.eval_reward_ma
+#                 agent.save(ckpt='best')
+#             if len(body.train_df) > 1:  # need > 1 row to calculate stability
+#                 metrics = analysis.analyze_session(self.spec, body.train_df, 'train')
+#                 body.log_metrics(metrics['scalar'], 'train')
+#             if len(body.eval_df) > 1:  # need > 1 row to calculate stability
+#                 metrics = analysis.analyze_session(self.spec, body.eval_df, 'eval')
+#                 body.log_metrics(metrics['scalar'], 'eval')
 
     def run_rl(self):
         '''Run the main RL loop until clock.max_frame'''
@@ -87,7 +100,7 @@ class Session:
         clock = self.env.clock
         state = self.env.reset()
         done = False
-        while True:
+        while clock.get() < clock.max_frame:
             if util.epi_done(done):  # before starting another episode
                 self.try_ckpt(self.agent, self.env)
                 if clock.get() < clock.max_frame:  # reset and continue

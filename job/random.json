@@ -1,0 +1,62 @@
+{
+  "random_realcomp": {
+    "agent": [{
+      "name": "random",
+      "algorithm": {
+        "name": "random",
+      },
+      "memory": {
+        "name": "Replay",
+        "batch_size": 32,
+        "max_size": 100,
+        "use_cer": true
+      },
+      "net": {
+        "type": "MLPNet",
+        "hid_layers": [64],
+        "hid_layers_activation": "selu",
+        "clip_grad_val": 0.5,
+        "loss_spec": {
+          "name": "MSELoss"
+        },
+        "optim_spec": {
+          "name": "Adam",
+          "lr": 0.02
+        },
+        "lr_scheduler_spec": {
+          "name": "StepLR",
+          "step_size": 1000,
+          "gamma": 0.9,
+        },
+        "update_type": "polyak",
+        "update_frequency": 32,
+        "polyak_coef": 0.1,
+        "gpu": false
+      }
+    }],
+    "env": [{
+      "name": "REALComp-v0",
+      "frame_op": null,
+      "frame_op_len": 4,
+      "reward_scale": "sign",
+      "num_envs": 16,
+      "max_t": 1000,
+      "max_frame": 1000,
+      "max_episode": 10
+    }],
+    "body": {
+      "product": "custom",
+      "num": [
+        [0,0,0],
+        [0,0,1]
+      ]
+    },
+    "meta": {
+      "distributed": false,
+      "log_frequency": 1000,
+      "eval_frequency": 10,
+      "max_session": 4,
+      "max_trial": 1,
+    }
+  }
+}

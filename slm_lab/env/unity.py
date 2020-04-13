@@ -5,6 +5,7 @@ from slm_lab.env.wrapper import try_scale_reward
 from slm_lab.lib import logger, util
 from slm_lab.lib.decorator import lab_api
 from unityagents import brain, UnityEnvironment
+from gym_unity.en import 
 import numpy as np
 import os
 import pydash as ps

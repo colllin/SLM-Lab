@@ -35,11 +35,11 @@ class OpenAIEnv(BaseEnv):
         super().__init__(spec)
         try_register_env(spec)  # register if it's a custom gym env
         seed = ps.get(spec, 'meta.random_seed')
-        if self.is_venv:  # make vector environment
-            self.u_env = make_gym_venv(self.name, self.num_envs, seed, self.frame_op, self.frame_op_len, self.reward_scale, self.normalize_state)
-        else:
-            self.u_env = make_gym_env(self.name, seed, self.frame_op, self.frame_op_len, self.reward_scale, self.normalize_state)
-        self._set_attr_from_u_env(self.u_env)
+#         if self.is_venv:  # make vector environment
+#             self.u_env = make_gym_venv(self.name, self.num_envs, seed, self.frame_op, self.frame_op_len, self.reward_scale, self.normalize_state)
+#         else:
+#             self.u_env = make_gym_env(self.name, seed, self.frame_op, self.frame_op_len, self.reward_scale, self.normalize_state)
+#         self._set_attr_from_u_env(self.u_env)
         self.max_t = self.max_t or self.u_env.spec.max_episode_steps
         assert self.max_t is not None
         logger.info(util.self_desc(self))
@@ -48,29 +48,29 @@ class OpenAIEnv(BaseEnv):
             self.u_env = gym.wrappers.Monitor(self.u_env, video_prepath, force=True)
             logger.info(f'Recorded videos will be saved in {video_prepath}')
 
-    def seed(self, seed):
-        self.u_env.seed(seed)
+#     def seed(self, seed):
+#         self.u_env.seed(seed)
 
-    @lab_api
-    def reset(self):
-        self.done = False
-        state = self.u_env.reset()
-        if self.to_render:
-            self.u_env.render()
-        return state
+#     @lab_api
+#     def reset(self):
+#         self.done = False
+#         state = self.u_env.reset()
+#         if self.to_render:
+#             self.u_env.render()
+#         return state
 
-    @lab_api
-    def step(self, action):
-        if not self.is_discrete and self.action_dim == 1:  # guard for continuous with action_dim 1, make array
-            action = np.expand_dims(action, axis=-1)
-        state, reward, done, info = self.u_env.step(action)
-        if self.to_render:
-            self.u_env.render()
-        if not self.is_venv and self.clock.t > self.max_t:
-            done = True
-        self.done = done
-        return state, reward, done, info
+#     @lab_api
+#     def step(self, action):
+#         if not self.is_discrete and self.action_dim == 1:  # guard for continuous with action_dim 1, make array
+#             action = np.expand_dims(action, axis=-1)
+#         state, reward, done, info = self.u_env.step(action)
+#         if self.to_render:
+#             self.u_env.render()
+#         if not self.is_venv and self.clock.t > self.max_t:
+#             done = True
+#         self.done = done
+#         return state, reward, done, info
 
-    @lab_api
-    def close(self):
-        self.u_env.close()
+#     @lab_api
+#     def close(self):
+#         self.u_env.close()
